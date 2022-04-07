@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.xu.viewmodeltest.entity.User
 
 class MainViewModel(count1: Int) : ViewModel() {
     private val userIdLiveData = MutableLiveData<String>()

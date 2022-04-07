@@ -2,6 +2,7 @@ package com.xu.viewmodeltest
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.xu.viewmodeltest.entity.User
 
 object Repository {
 
