@@ -5,16 +5,24 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings.Global.putInt
+import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.xu.viewmodeltest.dao.UserDao
+import com.xu.viewmodeltest.database.AppDatabase
 import com.xu.viewmodeltest.databinding.ActivityMainBinding
+import com.xu.viewmodeltest.entity.User
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var viewModel: MainViewModel
     var count1 = 0
+
+
+
 
     lateinit var sp: SharedPreferences
 
@@ -22,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
         sp = getPreferences(Context.MODE_PRIVATE)
         val countReserved = sp.getInt("count_reserved",0)
@@ -61,6 +71,35 @@ class MainActivity : AppCompatActivity() {
 
         //lifecycle添加监听
         lifecycle.addObserver(MyObserver())
+
+        //room
+        val userDao = AppDatabase.getDatabase(this).userDao()
+        val user1 = User("Tom", "Brady", 40)
+        val user2 = User("Tom", "Hanks", 63)
+        binding.addDataBtn.setOnClickListener {
+            thread {
+                user1.id = userDao.insertUser(user1)
+                user2.id = userDao.insertUser(user2)
+            }
+        }
+        binding.updateDataBtn.setOnClickListener {
+            thread {
+                user1.age = 42
+                userDao.update(user1)
+            }
+        }
+        binding.deleteDataBtn.setOnClickListener {
+            thread {
+                userDao.deleteUserByLastName("Hanks")
+            }
+        }
+        binding.queryDataBtn.setOnClickListener {
+            thread {
+                for (user in userDao.loadAllUses()) {
+                    Log.d("MainActivity", user.toString())
+                }
+            }
+        }
     }
 
     fun refreshCounter() {
